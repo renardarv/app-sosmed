@@ -1,20 +1,24 @@
 #!/bin/bash
-
 # Bash for Instalation nginx, php-fpm, mysql, database dan application web sosmed
 
+# Install nginx
 echo "Installing nginx ..."
 apt-get update
 apt-get install -y nginx 
 
 
-# Get sosmed app
+# Get sosmed app from repository github
 echo "Installing unzip ..."
+echo "===================================>"
 apt-get install unzip
 echo "Get sosmed app master ..."
 wget -P /home/ubuntu https://github.com/renardarv/app-sosmed/archive/master.zip
 unzip /home/ubuntu/master.zip -d /home/ubuntu
 
+
+# Symbolic link to make it enable
 echo "Setup nginx ..."
+echo "===================>"
 sudo unlink /etc/nginx/sites-enabled/default
 sudo cp /home/ubuntu/app-sosmed-master/nginx-sosmed /etc/nginx/sites-available
 sudo ln -s /etc/nginx/sites-available/nginx-sosmed /etc/nginx/sites-enabled/
@@ -23,7 +27,10 @@ sudo systemctl reload nginx
 echo "Installing php-fpm php-mysql mysql-server ..."
 apt-get install -y php-fpm php-mysql mysql-server
 
+
+# Install app sosmed to root
 echo "Installing app sosmed ..."
+echo "=============================>"
 from="/home/ubuntu/app-sosmed-master"
 sudo cp -r $from /var/www/html
 sudo cp $from/bash/{create-mysql-user,createdb-mysql} /bin
@@ -37,28 +44,34 @@ pass=`cat $loc/config.php | grep -E "[$]db_pass " | awk '{print$3}' | sed 's/[";
 db=`cat $loc/config.php | grep -E "[$]db_name " | awk '{print$3}' | sed 's/[";]//g'`
 
 echo "Create user $user..."
+echo "========================>"
 sudo mysql -u root << EOF
 create user '$user'@'$host' identified by '$pass';
 grant all privileges on *.* to '$user'@'$host';
 EOF
 
 
-# Create database basen on config.php
+# Create database based on config.php
 oldDb=`sudo ls /var/lib/mysql | grep $db`
 
 if [[ $db != $oldDb ]]; then
 
         echo "Create database $db..."
+        echo "==========================>"
         sudo mysql -u $user -p$pass <<EOF
         create database $db;
 EOF
 
         sudo mysql -u $user -p$pass $db < /var/www/html/app-sosmed-master/app/dump.sql
-
+        
+        echo "================================="
         echo "$db has been succesfully created!"
-
+        echo "================================="
+        
 else
 
+        echo "****************"
         echo "$db has existed!"
-
+        echo "****************"
+        
 fi
