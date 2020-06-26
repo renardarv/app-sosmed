@@ -2,7 +2,7 @@
 server {
         listen 80;
 	listen 443;
-        root /var/www/html/app-sosmed/app;
+        root /var/www/html/app-sosmed-master/app;
         index index.php index.html index.htm index.nginx-debian.html;
         server_name sosmed.net;
 
