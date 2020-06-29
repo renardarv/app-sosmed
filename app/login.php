@@ -53,7 +53,7 @@ if(isset($_POST['login'])){
 
         <p>&larr; <a href="index.php">Home</a>
 
-        <h4>Masuk ke Cilsy</h4>
+        <h4>Masuk ke Redbook</h4>
         <p>Belum punya akun? <a href="register.php">Daftar di sini</a></p>
 
         <form action="" method="POST">
